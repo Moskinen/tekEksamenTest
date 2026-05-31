@@ -30,7 +30,6 @@ jobs:
           host: ${{ secrets.VM_IP }}
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
-          secret: ${{ secrets.DOCKERHUB_USERNAME }}
           script: |
             docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
             docker stop tekeksamentest || true
