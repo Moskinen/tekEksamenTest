@@ -1,0 +1,38 @@
+name: CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v3
+
+      - name: Log ind på Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Byg og push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
+
+      - name: SSH ind på VM og deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_IP }}
+          username: azureuser
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          secret: ${{ secrets.DOCKERHUB_USERNAME }}
+          script: |
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
+            docker stop tekeksamentest || true
+            docker rm tekeksamentest || true
+            docker run -d -p 127.0.0.1:8080:8080 --name tekeksamentest ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
