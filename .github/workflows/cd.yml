@@ -31,6 +31,6 @@ jobs:
           username: azureuser
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo docker rm -f tekeksamentest || true
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
-            sudo docker run -d -p 0.0.0.0:8080:8080 --name tekeksamentest ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
+            docker rm -f tekeksamentest || true
+            docker pull ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
+            docker run -d -p 0.0.0.0:8080:8080 --name tekeksamentest ${{ secrets.DOCKERHUB_USERNAME }}/tekeksamentest:latest
